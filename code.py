@@ -8,10 +8,8 @@ screen = pygame.display.set_mode([600, 600])
 clock = pygame.time.Clock()
 snake = [[120, 160], [120, 180], [120, 200]]
 direction = [20, 0]
-case_vide = [0, 0]
-longueur = 3
+case_vide = snake[-1]
 score = 0
-fruit = False  ## False = fruit non mangé
 xf, yf = random.randint(0, 30) * 20, random.randint(0, 30) * 20
 
 
@@ -34,7 +32,7 @@ for i in range(30):
         pygame.draw.rect(screen, color, rect)
 
 
-def fruiit(snake, xf, yf):
+def fruit(snake, xf, yf):
     if snake[0][0] == xf and snake[0][1] == yf:
         xf, yf = nouveau_fruit(snake)
         # score = score + 1
@@ -55,29 +53,32 @@ def nouveau_fruit(snake):
     return (xf, yf)
 
 
-def deplacement(snake, direction):
+def deplacement(snake, direction, case_vide):
     case_vide = snake[-1]
     snake.insert(0, [snake[0][0] + direction[0], snake[0][1] + direction[1]])
     snake.pop()
     print(snake)
-    print(case_vide)
-    print(direction)
-    return snake
+    
+    return snake,case_vide
 
 
 def case_v(case_vide):
-    if ((case_vide[0] + case_vide[1]) / 20) % 2 == 0:
-        print("ok")
-        color1 = [200, 200, 200]
+    print(case_vide)
+    
+    if (((case_vide[0] + case_vide[1]) / 20) % 2) == 0:
+        
+        color1 = [255, 255, 255]
         rect1 = [case_vide[0], case_vide[1], 20, 20]
         pygame.draw.rect(screen, color1, rect1)
+        print("ok")
     else:
-        pygame.draw.rect(screen, [0, 10, 100], [case_vide[1], case_vide[0], 20, 20])
+        pygame.draw.rect(screen, [0, 0, 0], [case_vide[0], case_vide[1], 20, 20])
+        print("boomer")
+        
 
 
 while True:
 
-    print("ok")
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -101,10 +102,10 @@ while True:
 
     ## je fais bouger le serpent
 
-    snake = deplacement(snake, direction)
+    snake, case_vide = deplacement(snake, direction, case_vide)
     ## je dessine le serpent
 
-    for i in range(longueur):
+    for i in range(len(snake)):
         x = snake[i][0]
         y = snake[i][1]
         width = 20
@@ -120,10 +121,10 @@ while True:
 
     case_v(case_vide)
 
-    fruiit(snake, xf, yf)  ## dessine le fruit, quelquesoit le cas d'avant
+    fruit(snake, xf, yf)  ## dessine le fruit, quelquesoit le cas d'avant
 
     # print(score)
 
     pygame.display.update()
 
-    clock.tick(4)
+    clock.tick(6)
